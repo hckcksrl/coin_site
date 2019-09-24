@@ -1,6 +1,6 @@
 # coin_site
 
-# crawling server => redis => server => client
+# crawling server(open api) => redis(cache) => server(django) => client(react)
 
 
 # server modeling
