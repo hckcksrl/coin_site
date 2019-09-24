@@ -55,11 +55,6 @@ class CoinOne(APIView):
             return NotFound
 
 
-        price = float(coin_data["last"])
-        currency = coin_data["currency"]
-        high = float(coin_data["high"])
-        low =float(coin_data["low"])
-        volumn = float(coin_data["volume"])
 
         return Response(status=status.HTTP_200_OK)
 
@@ -107,12 +102,6 @@ class UpBit(APIView):
         if coin_data is False:
             return NotFound
 
-        price = (coin_data[0]["trade_price"])
-        currency = coin_data[0]["market"].replace("KRW-","")
-        high = float(coin_data[0]["high_price"])
-        low = float(coin_data[0]["low_price"])
-        volumn = float(coin_data[0]["acc_trade_volume"])
-        allprice = float(coin_data[0]["acc_trade_price"])
 
 
         return Response(status=status.HTTP_200_OK)
@@ -143,13 +132,6 @@ class Bithumb(APIView):
         if coin_data is False:
             return NotFound
 
-        price = float(coin_data['data']["closing_price"])
-        currency = name
-        high = float(coin_data['data']["max_price"])
-        low = float(coin_data['data']["min_price"])
-        volumn = float(coin_data['data']["units_traded_24H"])
-        allprice = float(coin_data['data']["acc_trade_value_24H"])
-        fluctate = float(coin_data['data']["fluctate_rate_24H"])
 
         return Response(status=status.HTTP_200_OK)
 
@@ -180,12 +162,6 @@ class KorBit(APIView):
         if coin_data is False:
             return NotFound
 
-        price = float(coin_data["last"])
-        currency = name
-        high = float(coin_data["high"])
-        low = float(coin_data["low"])
-        volumn = float(coin_data["volume"])
-        fluctate = float(coin_data["changePercent"])
 
         return Response(status=status.HTTP_200_OK)
 
