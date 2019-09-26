@@ -4,10 +4,16 @@ from . import models
 
 class CoinSerializer(serializers.ModelSerializer):
 
+    price = serializers.FloatField()
+    currency = serializers.CharField()
+    high = serializers.FloatField()
+    low = serializers.FloatField()
+    volume = serializers.FloatField()
+
     class Meta:
         model = models.Coin
-        field = (
-            'name',
+        fields = (
+            'currency',
             'price',
             'high',
             'low',

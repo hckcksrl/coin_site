@@ -3,12 +3,12 @@ from django.db import models
 
 class Coin(models.Model):
 
-    name = models.CharField()
-    price = models.IntegerField()
-    high = models.IntegerField()
-    low = models.IntegerField()
-    volume = models.IntegerField()
-    volume_price = models.IntegerField()
+    currency = models.CharField(max_length=255)
+    price = models.FloatField()
+    high = models.FloatField()
+    low = models.FloatField()
+    volume = models.FloatField()
+    volume_price = models.FloatField()
 
     class Meta:
         ordering = ['-volume_price']

@@ -4,23 +4,14 @@ from rest_framework import status
 from rest_framework.request import Request
 import json
 import requests
+from . import serializers
+from . import models
+from collections import OrderedDict
 
 NotFound = Response(status=status.HTTP_404_NOT_FOUND)
 
-with open('/home/ubuntu/coin_chat/coin/exchange/config.json', 'r') as f:
+with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/website/config.json', 'r') as f:
     config = json.load(f)
-
-
-def ko_or_en(name):
-    k_count = 0
-    for c in name:
-        if ord('가') <= ord(c) <= ord('힣'):
-            k_count += 1
-            break
-        elif ord('ㄱ') <= ord(c) <= ord('ㅎ'):
-            k_count += 1
-            break
-    return False if k_count > 0 else True
 
 
 def korean_to_english(name):
@@ -31,37 +22,30 @@ def korean_to_english(name):
 
 class CoinOne(APIView):
 
-    def get_coin(self, name):
-        api = f'https://api.coinone.co.kr/ticker?currency={name}'
+    def get_coin(self):
+        api = 'https://api.coinone.co.kr/ticker?currency=allcoin'
         data = requests.get(api)
-        if len(data.json()) != 14 or data.status_code == 404:
-            return False
         return data.json()
 
     def post(self, request:Request):
 
-        data = request.data
-        name = data['action']['params']['coin']
-        check = ko_or_en(name=name)
-        if check is False:
-            name = korean_to_english(name=name)
+        coin_data = self.get_coin()
+        print(coin_data.items())
+        od = OrderedDict(sorted(coin_data.items(), key=lambda x: x[1]['last'], reverse=True))
 
-        if name is False:
-            return NotFound
+        print(od)
+        # if coin_data is False:
+        #     return NotFound
+        #
+        #
+        # price = float(coin_data["last"])
+        # currency = coin_data["currency"]
+        # high = float(coin_data["high"])
+        # low =float(coin_data["low"])
+        # volume = float(coin_data["volume"])
+        # serializer = serializers.CoinSerializer(price=price,currency=currency,high=high,low=low,volume=volume)
 
-        coin_data = self.get_coin(name=name)
-
-        if coin_data is False:
-            return NotFound
-
-
-        price = float(coin_data["last"])
-        currency = coin_data["currency"]
-        high = float(coin_data["high"])
-        low =float(coin_data["low"])
-        volumn = float(coin_data["volume"])
-
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK,data={"a":"a"})
 
 
 class UpBit(APIView):
@@ -77,46 +61,32 @@ class UpBit(APIView):
             return False
         return data.json()
 
-    def korean(self, name):
+    def korean(self):
         api = f'https://api.upbit.com/v1/market/all'
         data = requests.get(api)
-        check = data.json()
+        return data.json()
 
-        for i in check:
-            if name == i['korean_name']:
-                s = i['market']
-                if s.startswith('KRW'):
-                    return s
+    def get(self, request:Request):
 
-        return False
+        data = self.korean()
+        coin_list = []
+        coin_serial = []
+        for i in data:
+            if i['market'].startswith('KRW-'):
+                coin_data = self.get_coin(name=i['market'])
+                coin_list.append(coin_data)
+        print(coin_list)
+        for j in coin_list:
+            price = float(j[0]["trade_price"])
+            currency = j[0]["market"].replace("KRW-","")
+            high = float(j[0]["high_price"])
+            low = float(j[0]["low_price"])
+            volume = float(j[0]["acc_trade_volume"])
+            model = models.Coin(price=price,currency=currency,high=high,low=low,volume=volume)
+            coin_serial.append(model)
+        serializer = serializers.CoinSerializer(coin_serial,many=True)
 
-    def post(self, request:Request):
-
-        data = request.data
-        name = data['action']['params']['coin']
-        check = ko_or_en(name=name)
-
-        if check is False:
-            name = self.korean(name=name)
-
-        if name is False:
-            return NotFound
-
-        coin_data = self.get_coin(name=name)
-
-        if coin_data is False:
-            return NotFound
-
-        price = (coin_data[0]["trade_price"])
-        currency = coin_data[0]["market"].replace("KRW-","")
-        high = float(coin_data[0]["high_price"])
-        low = float(coin_data[0]["low_price"])
-        volumn = float(coin_data[0]["acc_trade_volume"])
-        allprice = float(coin_data[0]["acc_trade_price"])
-
-
-        return Response(status=status.HTTP_200_OK)
-
+        return Response(status=status.HTTP_200_OK,data=serializer.data)
 
 class Bithumb(APIView):
 
@@ -129,14 +99,6 @@ class Bithumb(APIView):
 
     def post(self, request:Request):
 
-        data = request.data
-        name = data['action']['params']['coin']
-        check = ko_or_en(name=name)
-        if check is False:
-            name = korean_to_english(name=name)
-
-        if name is False:
-            return NotFound
 
         coin_data = self.get_coin(name=name)
 
@@ -147,11 +109,11 @@ class Bithumb(APIView):
         currency = name
         high = float(coin_data['data']["max_price"])
         low = float(coin_data['data']["min_price"])
-        volumn = float(coin_data['data']["units_traded_24H"])
-        allprice = float(coin_data['data']["acc_trade_value_24H"])
-        fluctate = float(coin_data['data']["fluctate_rate_24H"])
+        volume = float(coin_data['data']["units_traded_24H"])
+        coin = models.Coin(price=price,name=currency,high=high,low=low,volume=volume)
+        serializer = serializers.CoinSerializer(coin)
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK,data=serializer.data)
 
 
 class KorBit(APIView):
@@ -166,15 +128,6 @@ class KorBit(APIView):
 
     def post(self, request: Request):
 
-        data = request.data
-        name = data['action']['params']['coin']
-        check = ko_or_en(name=name)
-        if check is False:
-            name = korean_to_english(name=name)
-
-        if name is False:
-            return NotFound
-
         coin_data = self.get_coin(name=name)
 
         if coin_data is False:
@@ -184,10 +137,11 @@ class KorBit(APIView):
         currency = name
         high = float(coin_data["high"])
         low = float(coin_data["low"])
-        volumn = float(coin_data["volume"])
-        fluctate = float(coin_data["changePercent"])
+        volume = float(coin_data["volume"])
 
-        return Response(status=status.HTTP_200_OK)
+        serializer = serializers.CoinSerializer(price=price,currency=currency,high=high,low=low,volume=volume)
+
+        return Response(status=status.HTTP_200_OK,data=serializer.data)
 
 
 # Create your views here.
