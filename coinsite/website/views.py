@@ -14,12 +14,6 @@ with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/website/config.json',
     config = json.load(f)
 
 
-def korean_to_english(name):
-    if name in config:
-        return config[name]
-    else:
-        return False
-
 class CoinOne(APIView):
 
     def get_coin(self):
@@ -29,8 +23,8 @@ class CoinOne(APIView):
 
     def post(self, request:Request):
 
-        coin_data = self.get_coin()
-        print(coin_data.items())
+        coin_data = config["coinone"]
+        coin_list = coin_data.keys()
         od = OrderedDict(sorted(coin_data.items(), key=lambda x: x[1]['last'], reverse=True))
 
         print(od)
@@ -61,20 +55,11 @@ class UpBit(APIView):
             return False
         return data.json()
 
-    def korean(self):
-        api = f'https://api.upbit.com/v1/market/all'
-        data = requests.get(api)
-        return data.json()
-
     def get(self, request:Request):
 
-        data = self.korean()
+        coin_data = config["upbit"]
         coin_list = []
         coin_serial = []
-        for i in data:
-            if i['market'].startswith('KRW-'):
-                coin_data = self.get_coin(name=i['market'])
-                coin_list.append(coin_data)
         print(coin_list)
         for j in coin_list:
             price = float(j[0]["trade_price"])
@@ -100,7 +85,7 @@ class Bithumb(APIView):
     def post(self, request:Request):
 
 
-        coin_data = self.get_coin(name=name)
+        coin_data = config["bithumb"]
 
         if coin_data is False:
             return NotFound
@@ -128,7 +113,7 @@ class KorBit(APIView):
 
     def post(self, request: Request):
 
-        coin_data = self.get_coin(name=name)
+        coin_data = config["korbit"]
 
         if coin_data is False:
             return NotFound
