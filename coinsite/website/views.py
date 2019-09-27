@@ -16,30 +16,30 @@ with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/website/config.json',
 
 class CoinOne(APIView):
 
-    def get_coin(self):
-        api = 'https://api.coinone.co.kr/ticker?currency=allcoin'
+    def get_coin(self, name):
+        api = f'https://api.coinone.co.kr/ticker?currency={name}'
         data = requests.get(api)
         return data.json()
 
-    def post(self, request:Request):
+    def get(self, request:Request):
 
-        coin_data = config["coinone"]
-        coin_list = coin_data.keys()
-        od = OrderedDict(sorted(coin_data.items(), key=lambda x: x[1]['last'], reverse=True))
+        data = config["coinone"]
+        coin_list = list(data.keys())
+        coin_serial = list()
+        for name in coin_list:
+            coin = self.get_coin(name=name)
+            price = coin["last"]
+            currency = coin["currency"].upper()
+            high = coin["high"]
+            low = coin["low"]
+            volume = coin["low"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
+            coin_serial.append(coin_model)
 
-        print(od)
-        # if coin_data is False:
-        #     return NotFound
-        #
-        #
-        # price = float(coin_data["last"])
-        # currency = coin_data["currency"]
-        # high = float(coin_data["high"])
-        # low =float(coin_data["low"])
-        # volume = float(coin_data["volume"])
-        # serializer = serializers.CoinSerializer(price=price,currency=currency,high=high,low=low,volume=volume)
 
-        return Response(status=status.HTTP_200_OK,data={"a":"a"})
+        serializer = serializers.CoinSerializer(coin_serial, many=True)
+
+        return Response(status=status.HTTP_200_OK,data=serializer.data)
 
 
 class UpBit(APIView):
@@ -57,19 +57,19 @@ class UpBit(APIView):
 
     def get(self, request:Request):
 
-        coin_data = config["upbit"]
-        coin_list = []
-        coin_serial = []
-        print(coin_list)
-        for j in coin_list:
-            price = float(j[0]["trade_price"])
-            currency = j[0]["market"].replace("KRW-","")
-            high = float(j[0]["high_price"])
-            low = float(j[0]["low_price"])
-            volume = float(j[0]["acc_trade_volume"])
-            model = models.Coin(price=price,currency=currency,high=high,low=low,volume=volume)
+        data = config["upbit"]
+        coin_list = list(data.keys())
+        coin_serial = list()
+        for name in coin_list:
+            coin = self.get_coin(name=name)
+            price = float(coin[0]["trade_price"])
+            currency = name
+            high = float(coin[0]["high_price"])
+            low = float(coin[0]["low_price"])
+            volume = float(coin[0]["acc_trade_volume"])
+            model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
             coin_serial.append(model)
-        serializer = serializers.CoinSerializer(coin_serial,many=True)
+        serializer = serializers.CoinSerializer(coin_serial, many=True)
 
         return Response(status=status.HTTP_200_OK,data=serializer.data)
 
@@ -82,21 +82,22 @@ class Bithumb(APIView):
             return False
         return data.json()
 
-    def post(self, request:Request):
+    def get(self, request:Request):
 
+        data = config["bithumb"]
+        coin_list = list(data.keys())
+        coin_serial = list()
+        for name in coin_list:
+            coin = self.get_coin(name=name)
+            price = float(coin['data']["closing_price"])
+            currency = name
+            high = float(coin['data']["max_price"])
+            low = float(coin['data']["min_price"])
+            volume = float(coin['data']["units_traded_24H"])
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
+            coin_serial.append(coin_model)
 
-        coin_data = config["bithumb"]
-
-        if coin_data is False:
-            return NotFound
-
-        price = float(coin_data['data']["closing_price"])
-        currency = name
-        high = float(coin_data['data']["max_price"])
-        low = float(coin_data['data']["min_price"])
-        volume = float(coin_data['data']["units_traded_24H"])
-        coin = models.Coin(price=price,name=currency,high=high,low=low,volume=volume)
-        serializer = serializers.CoinSerializer(coin)
+        serializer = serializers.CoinSerializer(coin_serial, many=True)
 
         return Response(status=status.HTTP_200_OK,data=serializer.data)
 
@@ -111,20 +112,22 @@ class KorBit(APIView):
             return False
         return data.json()
 
-    def post(self, request: Request):
+    def get(self, request: Request):
 
-        coin_data = config["korbit"]
+        data = config["korbit"]
+        coin_list = list(data.keys())
+        coin_serial = list()
+        for name in coin_list:
+            coin = self.get_coin(name=name)
+            price = float(coin["last"])
+            currency = name
+            high = float(coin["high"])
+            low = float(coin["low"])
+            volume = float(coin["volume"])
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
+            coin_serial.append(coin_model)
 
-        if coin_data is False:
-            return NotFound
-
-        price = float(coin_data["last"])
-        currency = name
-        high = float(coin_data["high"])
-        low = float(coin_data["low"])
-        volume = float(coin_data["volume"])
-
-        serializer = serializers.CoinSerializer(price=price,currency=currency,high=high,low=low,volume=volume)
+        serializer = serializers.CoinSerializer(coin_serial, many=True)
 
         return Response(status=status.HTTP_200_OK,data=serializer.data)
 
