@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'website'
+    'website',
+    'django_crontab'
 ]
 
 MIDDLEWARE = [
@@ -69,6 +70,13 @@ TEMPLATES = [
     },
 ]
 
+CRONJOBS = [
+    ('* * * * *', 'coinsite.cron.set_redis')
+]
+# CRONTAB_DJANGO_SETTINGS_MODULE = 'coinsite.settings.local_settings'
+
+
+
 WSGI_APPLICATION = 'coinsite.wsgi.application'
 
 
@@ -79,6 +87,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.1:6379/1", # 1번 DB
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
