@@ -25,16 +25,18 @@ class CoinOne():
         for name in coin_list:
             coin = self.get_coin(name=name)
             price = coin["last"]
-            currency = coin["currency"].upper()
+            korean = data[name]
+            currency = name
             high = coin["high"]
             low = coin["low"]
-            volume = coin["volume"]
+            volume = round(coin["volume"], 2)
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
+                "korean": korean
             }})
 
         return json.dumps(coin_data)
@@ -64,16 +66,18 @@ class Upbit:
         for name in coin_list:
             coin = self.get_coin(name=name)
             price = float(coin[0]["trade_price"])
+            korean = data[name]
             currency = name
             high = float(coin[0]["high_price"])
             low = float(coin[0]["low_price"])
-            volume = float(coin[0]["acc_trade_volume"])
+            volume = round(float(coin[0]["acc_trade_volume"]), 2)
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
+                "korean": korean
             }})
 
         return json.dumps(coin_data)
@@ -99,16 +103,18 @@ class Bithumb:
         for name in coin_list:
             coin = self.get_coin(name=name)
             price = float(coin['data']["closing_price"])
+            korean = data[name]
             currency = name
             high = float(coin['data']["max_price"])
             low = float(coin['data']["min_price"])
-            volume = float(coin['data']["units_traded_24H"])
+            volume = round(float(coin['data']["units_traded_24H"]), 2)
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
+                "korean": korean
             }})
 
         return json.dumps(coin_data)
@@ -135,16 +141,18 @@ class Korbit:
         for name in coin_list:
             coin = self.get_coin(name=name)
             price = float(coin["last"])
+            korean = data[name]
             currency = name
             high = float(coin["high"])
             low = float(coin["low"])
-            volume = float(coin["volume"])
+            volume = round(float(coin["volume"]), 2)
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
+                "korean": korean
             }})
 
         return json.dumps(coin_data)
@@ -153,19 +161,22 @@ class Korbit:
 def set_redis():
 # if __name__ == '__main__':
 
-    cache.delete('coinone')
-    cache.delete('upbit')
-    cache.delete('bithumb')
-    cache.delete('korbit')
-
     coinone_coin = CoinOne().get_coinone()
     upbit_coin = Upbit().get_upbit()
     bithumb_coin = Bithumb().get_bithumb()
     korbit_coin = Korbit().get_korbit()
 
-    cache.set('coinone',coinone_coin)
-    cache.set('upbit',upbit_coin)
-    cache.set('bithumb',bithumb_coin)
+
+    cache.delete('coinone')
+    cache.set('coinone', coinone_coin)
+
+    cache.delete('upbit')
+    cache.set('upbit', upbit_coin)
+
+    cache.delete('bithumb')
+    cache.set('bithumb', bithumb_coin)
+
+    cache.delete('korbit')
     cache.set('korbit',korbit_coin)
 
 # else :

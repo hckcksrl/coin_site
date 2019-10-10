@@ -8,8 +8,6 @@ class Coin(models.Model):
     high = models.FloatField()
     low = models.FloatField()
     volume = models.FloatField()
-    volume_price = models.FloatField()
+    korean = models.CharField(max_length=255)
 
-    class Meta:
-        ordering = ['-volume_price']
 

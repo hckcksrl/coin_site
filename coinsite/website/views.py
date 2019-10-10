@@ -22,7 +22,8 @@ class CoinOne(APIView):
             high = coin["high"]
             low = coin["low"]
             volume = coin["volume"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
+            korean = coin["korean"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
@@ -43,7 +44,8 @@ class UpBit(APIView):
             high = coin["high"]
             low = coin["low"]
             volume = coin["volume"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
+            korean = coin["korean"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
@@ -64,12 +66,16 @@ class Bithumb(APIView):
             high = coin["high"]
             low = coin["low"]
             volume = coin["volume"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
+            korean = coin["korean"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
 
         return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/coinsite/config.json', 'r') as f:
+    config = json.load(f)
 
 
 class KorBit(APIView):
@@ -85,11 +91,18 @@ class KorBit(APIView):
             high = coin["high"]
             low = coin["low"]
             volume = coin["volume"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume)
+            korean = coin["korean"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
 
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-# Create your views here.
+class Search(APIView):
+
+    def get(self, request: Request, name):
+        bithumb_data = config['bithumb']
+        coinone_data = config['coinone']
+        upbit_data = config['upbit']
+        korbit_data = config['korbit']
