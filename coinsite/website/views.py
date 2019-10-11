@@ -101,10 +101,6 @@ class KorBit(APIView):
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
-with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/coinsite/config.json', 'r') as f:
-    config = json.load(f)
-
-
 class Search(APIView):
 
     def is_exist(self, name, data, exchange):
