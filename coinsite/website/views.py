@@ -23,7 +23,8 @@ class CoinOne(APIView):
             low = coin["low"]
             volume = coin["volume"]
             korean = coin["korean"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
+            rate = coin["rate"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean, rate=rate)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
@@ -45,7 +46,8 @@ class UpBit(APIView):
             low = coin["low"]
             volume = coin["volume"]
             korean = coin["korean"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
+            rate = coin["rate"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean, rate=rate)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
@@ -67,15 +69,13 @@ class Bithumb(APIView):
             low = coin["low"]
             volume = coin["volume"]
             korean = coin["korean"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
+            rate = coin["rate"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean, rate=rate)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
 
         return Response(status=status.HTTP_200_OK, data=serializer.data)
-
-with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/coinsite/config.json', 'r') as f:
-    config = json.load(f)
 
 
 class KorBit(APIView):
@@ -92,17 +92,49 @@ class KorBit(APIView):
             low = coin["low"]
             volume = coin["volume"]
             korean = coin["korean"]
-            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean)
+            rate = coin["rate"]
+            coin_model = models.Coin(price=price, currency=currency, high=high, low=low, volume=volume, korean=korean, rate=rate)
             coin_serial.append(coin_model)
 
         serializer = serializers.CoinSerializer(coin_serial, many=True)
 
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
+
+with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/coinsite/config.json', 'r') as f:
+    config = json.load(f)
+
+
 class Search(APIView):
 
-    def get(self, request: Request, name):
-        bithumb_data = config['bithumb']
-        coinone_data = config['coinone']
-        upbit_data = config['upbit']
-        korbit_data = config['korbit']
+    def is_exist(self, name, data, exchange):
+        coin = json.loads(data)
+        coin_name = name.upper()
+        for i in list(coin.keys()):
+            if i == coin_name:
+                coin[i]["exchange"] = exchange
+                return coin[i]
+
+        return False
+
+
+
+    def get(self, request: Request):
+        name = request.GET["name"]
+
+        bithumb_data = cache.get('bithumb')
+        coinone_data = cache.get('coinone')
+        upbit_data = cache.get('upbit')
+        korbit_data = cache.get('korbit')
+
+        data_list = [bithumb_data, upbit_data, coinone_data, korbit_data]
+        exchange_list = ['빗썸', '업비트', '코인원', '코빗']
+        result_list = list()
+
+        for (data,exchange) in zip(data_list,exchange_list):
+            result = self.is_exist(name, data, exchange)
+            if result != False:
+                result_list.append(result)
+
+        return Response(status=status.HTTP_200_OK,data=result_list)
+

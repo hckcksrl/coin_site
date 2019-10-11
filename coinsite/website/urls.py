@@ -6,5 +6,5 @@ urlpatterns = [
     path('upbit', views.UpBit.as_view()),
     path('bithumb', views.Bithumb.as_view()),
     path('korbit', views.KorBit.as_view()),
-    path('search/<str:name>', views.Search.as_view())
+    path('search', views.Search.as_view())
 ]

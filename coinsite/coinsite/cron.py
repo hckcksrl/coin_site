@@ -24,19 +24,24 @@ class CoinOne():
         coin_data = dict()
         for name in coin_list:
             coin = self.get_coin(name=name)
-            price = coin["last"]
+            price = float(coin["last"])
             korean = data[name]
             currency = name
             high = coin["high"]
             low = coin["low"]
-            volume = round(coin["volume"], 2)
+            volume = round(float(coin["volume"]), 2)
+
+            yesterday = float(coin["yesterday_last"])   # 24시간전 마지막가격
+            rate = round(((price/yesterday)-1)*100,2) # 24시간전가격, 지금가격의 가격등락폭
+
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
-                "korean": korean
+                "korean": korean,
+                "rate" : rate
             }})
 
         return json.dumps(coin_data)
@@ -71,13 +76,18 @@ class Upbit:
             high = float(coin[0]["high_price"])
             low = float(coin[0]["low_price"])
             volume = round(float(coin[0]["acc_trade_volume"]), 2)
+            rate = round(float(coin[0]["change_rate"])*100, 2)
+            change = coin[0]["change"]
+            if change == 'FALL':
+                rate = 0 - rate
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
-                "korean": korean
+                "korean": korean,
+                "rate": rate
             }})
 
         return json.dumps(coin_data)
@@ -108,13 +118,15 @@ class Bithumb:
             high = float(coin['data']["max_price"])
             low = float(coin['data']["min_price"])
             volume = round(float(coin['data']["units_traded_24H"]), 2)
+            rate = float(coin['data']["fluctate_rate_24H"])
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
-                "korean": korean
+                "korean": korean,
+                "rate": rate
             }})
 
         return json.dumps(coin_data)
@@ -146,13 +158,15 @@ class Korbit:
             high = float(coin["high"])
             low = float(coin["low"])
             volume = round(float(coin["volume"]), 2)
+            rate = float(coin["changePercent"])
             coin_data.update({name: {
                 "currency": currency,
                 "price": price,
                 "high": high,
                 "low": low,
                 "volume": volume,
-                "korean": korean
+                "korean": korean,
+                "rate": rate
             }})
 
         return json.dumps(coin_data)

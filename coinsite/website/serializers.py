@@ -10,6 +10,8 @@ class CoinSerializer(serializers.ModelSerializer):
     low = serializers.FloatField()
     volume = serializers.FloatField()
     korean = serializers.CharField()
+    rate = serializers.FloatField()
+
     class Meta:
         model = models.Coin
         fields = (
@@ -18,6 +20,7 @@ class CoinSerializer(serializers.ModelSerializer):
             'high',
             'low',
             'volume',
-            'korean'
+            'korean',
+            'rate'
         )
 
