@@ -3,4 +3,4 @@
 # crawling server(open api) => redis(cache) => server(django) => client(react)
 
 
-# server modeling
+## Django , Redis , Open API
