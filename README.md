@@ -1,7 +1,9 @@
-# coin_site
+# Server
 
 ## crawling server(open api) => redis(cache) => server(django) => client(react)
 
 
-### Django , Redis , Open API
-`dd
+> Django
+> Redis
+> Open API
+
