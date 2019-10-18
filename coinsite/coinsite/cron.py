@@ -1,6 +1,6 @@
 import requests
-import redis
 import json
+import time
 from django.core.cache import cache
 
 
@@ -54,10 +54,19 @@ class Upbit:
 
     def get_coin(self, name):
         name = name.upper()
+        second_count = 0
         if not name.startswith('KRW-'):
             name = f'KRW-{name}'
         api = f'https://api.upbit.com/v1/ticker?markets={name}'
         data = requests.get(api)
+
+        remain_req = data.headers['Remaining-Req']
+        remain_str = remain_req.split(';')
+        for i in range(2, 3):
+            second_count= remain_str[i].split('=')[1]
+
+        if int(second_count) == 1:
+            time.sleep(1)
 
         if data.status_code == 404:
             return False
