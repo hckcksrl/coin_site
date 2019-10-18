@@ -7,3 +7,5 @@
 * Redis
 * Open API
 
+
+### Zappa , Elasticache 적용
