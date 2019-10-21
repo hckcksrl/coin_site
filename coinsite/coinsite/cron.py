@@ -2,9 +2,9 @@ import requests
 import json
 import time
 from django.core.cache import cache
-
-
-with open('/Users/hckcksrl/Desktop/study/coinsite/coinsite/coinsite/config.json', 'r') as f:
+import os
+import sys
+with open(os.path.join(sys.path[0], "coinsite/config.json"), 'r') as f:
     config = json.load(f)
 
 
@@ -14,7 +14,7 @@ class CoinOne():
         pass
 
     def get_coin(self, name):
-        api = f'https://api.coinone.co.kr/ticker?currency={name}'
+        api = f'https://api.coinone.co.kr/ticker?currency=BTC'
         data = requests.get(api)
         return data.json()
 
