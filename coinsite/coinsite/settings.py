@@ -100,7 +100,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://coin.gfravi.ng.0001.apn2.cache.amazonaws.com:6379",# 1번 DB
+        "LOCATION": "redis://coin.gfravi.ng.0001.apn2.cache.amazonaws.com:6379/1",# 1번 DB
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
