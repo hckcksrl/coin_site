@@ -1,5 +1,7 @@
 import abc
 from django.core.cache import cache
+import json
+
 
 class CoinABCRepository:
     __metaclass__ = abc.ABCMeta
