@@ -185,23 +185,22 @@ def set_redis():
 # if __name__ == '__main__':
 
     coinone_coin = CoinOne().get_coinone()
-    # upbit_coin = Upbit().get_upbit()
-    # bithumb_coin = Bithumb().get_bithumb()
-    # korbit_coin = Korbit().get_korbit()
+    upbit_coin = Upbit().get_upbit()
+    bithumb_coin = Bithumb().get_bithumb()
+    korbit_coin = Korbit().get_korbit()
 
 
-    # cache.delete('coinone')
-    cache.set('mykey', 'asdsad')
-    print(cache.get('mykey'))
-    # cache.delete('upbit')
-    # cache.set('upbit', upbit_coin)
-    #
-    # cache.delete('bithumb')
-    # cache.set('bithumb', bithumb_coin)
-    #
-    # cache.delete('korbit')
-    # cache.set('korbit',korbit_coin)
-    # print(cache.get('coinone'))
+    cache.delete('coinone')
+    cache.set('coinone,' coinone_coin)
+
+    cache.delete('upbit')
+    cache.set('upbit', upbit_coin)
+
+    cache.delete('bithumb')
+    cache.set('bithumb', bithumb_coin)
+
+    cache.delete('korbit')
+    cache.set('korbit',korbit_coin)
 # else :
 #
 #     print(False)

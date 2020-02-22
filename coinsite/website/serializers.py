@@ -2,7 +2,7 @@ from rest_framework import serializers
 from . import models
 
 
-class CoinSerializer(serializers.ModelSerializer):
+class CoinSerializer(serializers.Serializer):
 
     price = serializers.FloatField()
     currency = serializers.CharField()
@@ -11,16 +11,3 @@ class CoinSerializer(serializers.ModelSerializer):
     volume = serializers.FloatField()
     korean = serializers.CharField()
     rate = serializers.FloatField()
-
-    class Meta:
-        model = models.Coin
-        fields = (
-            'currency',
-            'price',
-            'high',
-            'low',
-            'volume',
-            'korean',
-            'rate'
-        )
-

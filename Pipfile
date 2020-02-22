@@ -6,9 +6,17 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-django = "*"
 djangorestframework = "*"
 requests = "*"
+django-redis = "*"
+redis = "*"
+django-crontab = "*"
+django-cors-headers = "*"
+awscli = "*"
+django = "==2.1.9"
+django-elasticache = "*"
+zappa = "*"
+django-redis-cache = "*"
 
 [requires]
 python_version = "3.7"
