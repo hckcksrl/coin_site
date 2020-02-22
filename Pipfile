@@ -13,10 +13,8 @@ redis = "*"
 django-crontab = "*"
 django-cors-headers = "*"
 awscli = "*"
-django = "==2.1.9"
-django-elasticache = "*"
-zappa = "*"
 django-redis-cache = "*"
+django = "*"
 
 [requires]
 python_version = "3.7"
