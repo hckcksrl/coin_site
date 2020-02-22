@@ -14,7 +14,7 @@ django-crontab = "*"
 django-cors-headers = "*"
 awscli = "*"
 django-redis-cache = "*"
-django = "*"
+django = 2.1.0
 
 [requires]
 python_version = "3.7"
